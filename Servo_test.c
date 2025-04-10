@@ -1,6 +1,7 @@
 #include <kipr/wombat.h>
 int arm = 0;
 int second = 1000;
+//Desired up and down positions
 int arm_up= 500;
 int arm_dn= 1200;
 
