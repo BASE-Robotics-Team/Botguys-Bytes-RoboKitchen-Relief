@@ -1,1 +1,15 @@
+Terms:
 
+motorfr = port of motor front right 
+motorfl = port of motor front left 
+motorbr = port of motor back right 
+motorbl = port of motor back left 
+speed =  desired speed, value of 0-100 is requried 
+portarm = port of servo considred the first servo on the robot, typically the servo starting at 0
+portarm2 = port of servo considred the second servo on the robot, typically the servo starting at ~1409
+second = 1000; value will always be 1000 as there are 1000 miliseconds in a second 
+arm_current= current position of the arm  
+sevcurrent = current position of first servo
+sevcurrent2 = current position of second servo
+sevcurrentv = desired starting postion of second servo 
+sevhm = desired starting postion of first servo 
