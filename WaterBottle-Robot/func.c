@@ -23,100 +23,170 @@ void backward(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
     	motor(motorfl,speed);
     	motor(motorfr,speed);
 }
-void crabl(int motorbr_port, int motorbl_port, int motorfl_port, int motorfr_port, int common_speed) {
-    // Declare thread objects
-    thread tid_br, tid_bl, tid_fl, tid_fr;
+void crabl(int motorbr, int motorbl, int motorfl, int motorfr, int speed) {
+    pthread_t thread_br, thread_bl, thread_fl, thread_fr;
+    motor_args_t *args_br, *args_bl, *args_fl, *args_fr;
 
-    // Prepare arguments for each thread.
-
-    // For motorbr: motor(motorbr, common_speed)
-    // Use run_motor_direct_speed_wrapper.
-    motor_args args_br = {motorbr_port, common_speed};
-
-    // For motorbl: motor(motorbl, -common_speed)
-    // Use run_motor_negate_speed_wrapper.
-    motor_args args_bl = {motorbl_port, common_speed};
-
-    // For motorfl: motor(motorfl, common_speed)
-    // Use run_motor_direct_speed_wrapper.
-    motor_args args_fl = {motorfl_port, common_speed};
-
-    // For motorfr: motor(motorfr, -common_speed)
-    // Use run_motor_negate_speed_wrapper.
-    motor_args args_fr = {motorfr_port, common_speed};
-
-    // Create and start the threads
-    if (thread_create(&tid_br, run_motor_direct_speed_wrapper, &args_br) == -1) {
-        printf("Error creating thread for motorbr (crabl)\n");
-    } else if (thread_start(&tid_br) == -1) {
-        printf("Error starting thread for motorbr (crabl)\n");
+    // --- Motor Back Right (motorbr) ---
+    args_br = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_br == NULL) {
+        perror("Failed to allocate memory for motorbr args");
+        return; // Or handle error appropriately
+    }
+    args_br->motor_id = motorbr;
+    args_br->speed = speed;
+    if (pthread_create(&thread_br, NULL, run_motor_thread, args_br) != 0) {
+        perror("Error creating thread for motorbr");
+        free(args_br); // Clean up allocated memory on error
+        // Potentially handle error for other threads too
+        return;
     }
 
-    if (thread_create(&tid_bl, run_motor_negate_speed_wrapper, &args_bl) == -1) {
-        printf("Error creating thread for motorbl (crabl)\n");
-    } else if (thread_start(&tid_bl) == -1) {
-        printf("Error starting thread for motorbl (crabl)\n");
+    // --- Motor Back Left (motorbl) ---
+    args_bl = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_bl == NULL) {
+        perror("Failed to allocate memory for motorbl args");
+        // Consider how to handle partial failures (e.g., join created threads before returning)
+        pthread_join(thread_br, NULL); // Wait for already created thread
+        return;
+    }
+    args_bl->motor_id = motorbl;
+    args_bl->speed = -speed;
+    if (pthread_create(&thread_bl, NULL, run_motor_thread, args_bl) != 0) {
+        perror("Error creating thread for motorbl");
+        free(args_bl);
+        pthread_join(thread_br, NULL);
+        return;
     }
 
-    if (thread_create(&tid_fl, run_motor_direct_speed_wrapper, &args_fl) == -1) {
-        printf("Error creating thread for motorfl (crabl)\n");
-    } else if (thread_start(&tid_fl) == -1) {
-        printf("Error starting thread for motorfl (crabl)\n");
+    // --- Motor Front Left (motorfl) ---
+    args_fl = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_fl == NULL) {
+        perror("Failed to allocate memory for motorfl args");
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        return;
+    }
+    args_fl->motor_id = motorfl;
+    args_fl->speed = speed;
+    if (pthread_create(&thread_fl, NULL, run_motor_thread, args_fl) != 0) {
+        perror("Error creating thread for motorfl");
+        free(args_fl);
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        return;
     }
 
-    if (thread_create(&tid_fr, run_motor_negate_speed_wrapper, &args_fr) == -1) {
-        printf("Error creating thread for motorfr (crabl)\n");
-    } else if (thread_start(&tid_fr) == -1) {
-        printf("Error starting thread for motorfr (crabl)\n");
+    // --- Motor Front Right (motorfr) ---
+    args_fr = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_fr == NULL) {
+        perror("Failed to allocate memory for motorfr args");
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        pthread_join(thread_fl, NULL);
+        return;
     }
+    args_fr->motor_id = motorfr;
+    args_fr->speed = -speed;
+    if (pthread_create(&thread_fr, NULL, run_motor_thread, args_fr) != 0) {
+        perror("Error creating thread for motorfr");
+        free(args_fr);
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        pthread_join(thread_fl, NULL);
+        return;
+    }
+
+    pthread_join(thread_br, NULL);
+    pthread_join(thread_bl, NULL);
+    pthread_join(thread_fl, NULL);
+    pthread_join(thread_fr, NULL);
+
+    printf("crabl function finished.\n");
 }
-void crabr_threaded(int motorbr_port, int motorbl_port, int motorfl_port, int motorfr_port, int common_speed) {
-    // Declare thread objects
-    thread tid_br, tid_bl, tid_fl, tid_fr;
-    // For motorbr: motor(motorbr, -common_speed)
-    // Use run_motor_negate_speed_wrapper, and it will negate the common_speed.
-    motor_args args_br = {motorbr_port, common_speed};
 
-    // For motorbl: motor(motorbl, common_speed)
-    // Use run_motor_direct_speed_wrapper.
-    motor_args args_bl = {motorbl_port, common_speed};
+void crabr(int motorbr, int motorbl, int motorfl, int motorfr, int speed) {
+    pthread_t thread_br, thread_bl, thread_fl, thread_fr;
+    motor_args_t *args_br, *args_bl, *args_fl, *args_fr;
 
-    // For motorfl: motor(motorfl, -common_speed)
-    // Use run_motor_negate_speed_wrapper.
-    motor_args args_fl = {motorfl_port, common_speed};
-
-    // For motorfr: motor(motorfr, common_speed)
-    // Use run_motor_direct_speed_wrapper.
-    motor_args args_fr = {motorfr_port, common_speed};
-
-    // Create and start the threads
-    // int thread_create(thread *tid, void *(*routine)(void *), void *arg);
-    // int thread_start(thread *tid);
-
-    if (thread_create(&tid_br, run_motor_negate_speed_wrapper, &args_br) == -1) {
-        printf("Error creating thread for motorbr (crabr)\n");
-    } else if (thread_start(&tid_br) == -1) {
-        printf("Error starting thread for motorbr (crabr)\n");
+    // --- Motor Back Right (motorbr) ---
+    args_br = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_br == NULL) {
+        perror("Failed to allocate memory for motorbr args");
+        return; // Or handle error appropriately
+    }
+    args_br->motor_id = motorbr;
+    args_br->speed = -speed;
+    if (pthread_create(&thread_br, NULL, run_motor_thread, args_br) != 0) {
+        perror("Error creating thread for motorbr");
+        free(args_br); // Clean up allocated memory on error
+        // Potentially handle error for other threads too
+        return;
     }
 
-    if (thread_create(&tid_bl, run_motor_direct_speed_wrapper, &args_bl) == -1) {
-        printf("Error creating thread for motorbl (crabr)\n");
-    } else if (thread_start(&tid_bl) == -1) {
-        printf("Error starting thread for motorbl (crabr)\n");
+    // --- Motor Back Left (motorbl) ---
+    args_bl = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_bl == NULL) {
+        perror("Failed to allocate memory for motorbl args");
+        // Consider how to handle partial failures (e.g., join created threads before returning)
+        pthread_join(thread_br, NULL); // Wait for already created thread
+        return;
+    }
+    args_bl->motor_id = motorbl;
+    args_bl->speed = speed;
+    if (pthread_create(&thread_bl, NULL, run_motor_thread, args_bl) != 0) {
+        perror("Error creating thread for motorbl");
+        free(args_bl);
+        pthread_join(thread_br, NULL);
+        return;
     }
 
-    if (thread_create(&tid_fl, run_motor_negate_speed_wrapper, &args_fl) == -1) {
-        printf("Error creating thread for motorfl (crabr)\n");
-    } else if (thread_start(&tid_fl) == -1) {
-        printf("Error starting thread for motorfl (crabr)\n");
+    // --- Motor Front Left (motorfl) ---
+    args_fl = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_fl == NULL) {
+        perror("Failed to allocate memory for motorfl args");
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        return;
+    }
+    args_fl->motor_id = motorfl;
+    args_fl->speed = -speed;
+    if (pthread_create(&thread_fl, NULL, run_motor_thread, args_fl) != 0) {
+        perror("Error creating thread for motorfl");
+        free(args_fl);
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        return;
     }
 
-    if (thread_create(&tid_fr, run_motor_direct_speed_wrapper, &args_fr) == -1) {
-        printf("Error creating thread for motorfr (crabr)\n");
-    } else if (thread_start(&tid_fr) == -1) {
-        printf("Error starting thread for motorfr (crabr)\n");
+    // --- Motor Front Right (motorfr) ---
+    args_fr = (motor_args_t*)malloc(sizeof(motor_args_t));
+    if (args_fr == NULL) {
+        perror("Failed to allocate memory for motorfr args");
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        pthread_join(thread_fl, NULL);
+        return;
     }
+    args_fr->motor_id = motorfr;
+    args_fr->speed = speed;
+    if (pthread_create(&thread_fr, NULL, run_motor_thread, args_fr) != 0) {
+        perror("Error creating thread for motorfr");
+        free(args_fr);
+        pthread_join(thread_br, NULL);
+        pthread_join(thread_bl, NULL);
+        pthread_join(thread_fl, NULL);
+        return;
+    }
+
+    pthread_join(thread_br, NULL);
+    pthread_join(thread_bl, NULL);
+    pthread_join(thread_fl, NULL);
+    pthread_join(thread_fr, NULL);
+
+    printf("crabl function finished.\n");
 }
+
 void move_in_place_ccw(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
 	motor(motorbr,speed);
 	motor(motorbl,-speed);
