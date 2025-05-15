@@ -23,17 +23,99 @@ void backward(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
     	motor(motorfl,speed);
     	motor(motorfr,speed);
 }
-void crabl(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
-	motor(motorbr,speed);
-	motor(motorbl,-speed);
-    	motor(motorfl,speed);
-    	motor(motorfr,-speed);
+void crabl(int motorbr_port, int motorbl_port, int motorfl_port, int motorfr_port, int common_speed) {
+    // Declare thread objects
+    thread tid_br, tid_bl, tid_fl, tid_fr;
+
+    // Prepare arguments for each thread.
+
+    // For motorbr: motor(motorbr, common_speed)
+    // Use run_motor_direct_speed_wrapper.
+    motor_args args_br = {motorbr_port, common_speed};
+
+    // For motorbl: motor(motorbl, -common_speed)
+    // Use run_motor_negate_speed_wrapper.
+    motor_args args_bl = {motorbl_port, common_speed};
+
+    // For motorfl: motor(motorfl, common_speed)
+    // Use run_motor_direct_speed_wrapper.
+    motor_args args_fl = {motorfl_port, common_speed};
+
+    // For motorfr: motor(motorfr, -common_speed)
+    // Use run_motor_negate_speed_wrapper.
+    motor_args args_fr = {motorfr_port, common_speed};
+
+    // Create and start the threads
+    if (thread_create(&tid_br, run_motor_direct_speed_wrapper, &args_br) == -1) {
+        printf("Error creating thread for motorbr (crabl)\n");
+    } else if (thread_start(&tid_br) == -1) {
+        printf("Error starting thread for motorbr (crabl)\n");
+    }
+
+    if (thread_create(&tid_bl, run_motor_negate_speed_wrapper, &args_bl) == -1) {
+        printf("Error creating thread for motorbl (crabl)\n");
+    } else if (thread_start(&tid_bl) == -1) {
+        printf("Error starting thread for motorbl (crabl)\n");
+    }
+
+    if (thread_create(&tid_fl, run_motor_direct_speed_wrapper, &args_fl) == -1) {
+        printf("Error creating thread for motorfl (crabl)\n");
+    } else if (thread_start(&tid_fl) == -1) {
+        printf("Error starting thread for motorfl (crabl)\n");
+    }
+
+    if (thread_create(&tid_fr, run_motor_negate_speed_wrapper, &args_fr) == -1) {
+        printf("Error creating thread for motorfr (crabl)\n");
+    } else if (thread_start(&tid_fr) == -1) {
+        printf("Error starting thread for motorfr (crabl)\n");
+    }
 }
-void crabr(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
-	motor(motorbr,-speed);
-	motor(motorbl,speed);
-    	motor(motorfl,-speed);
-    	motor(motorfr,speed);
+void crabr_threaded(int motorbr_port, int motorbl_port, int motorfl_port, int motorfr_port, int common_speed) {
+    // Declare thread objects
+    thread tid_br, tid_bl, tid_fl, tid_fr;
+    // For motorbr: motor(motorbr, -common_speed)
+    // Use run_motor_negate_speed_wrapper, and it will negate the common_speed.
+    motor_args args_br = {motorbr_port, common_speed};
+
+    // For motorbl: motor(motorbl, common_speed)
+    // Use run_motor_direct_speed_wrapper.
+    motor_args args_bl = {motorbl_port, common_speed};
+
+    // For motorfl: motor(motorfl, -common_speed)
+    // Use run_motor_negate_speed_wrapper.
+    motor_args args_fl = {motorfl_port, common_speed};
+
+    // For motorfr: motor(motorfr, common_speed)
+    // Use run_motor_direct_speed_wrapper.
+    motor_args args_fr = {motorfr_port, common_speed};
+
+    // Create and start the threads
+    // int thread_create(thread *tid, void *(*routine)(void *), void *arg);
+    // int thread_start(thread *tid);
+
+    if (thread_create(&tid_br, run_motor_negate_speed_wrapper, &args_br) == -1) {
+        printf("Error creating thread for motorbr (crabr)\n");
+    } else if (thread_start(&tid_br) == -1) {
+        printf("Error starting thread for motorbr (crabr)\n");
+    }
+
+    if (thread_create(&tid_bl, run_motor_direct_speed_wrapper, &args_bl) == -1) {
+        printf("Error creating thread for motorbl (crabr)\n");
+    } else if (thread_start(&tid_bl) == -1) {
+        printf("Error starting thread for motorbl (crabr)\n");
+    }
+
+    if (thread_create(&tid_fl, run_motor_negate_speed_wrapper, &args_fl) == -1) {
+        printf("Error creating thread for motorfl (crabr)\n");
+    } else if (thread_start(&tid_fl) == -1) {
+        printf("Error starting thread for motorfl (crabr)\n");
+    }
+
+    if (thread_create(&tid_fr, run_motor_direct_speed_wrapper, &args_fr) == -1) {
+        printf("Error creating thread for motorfr (crabr)\n");
+    } else if (thread_start(&tid_fr) == -1) {
+        printf("Error starting thread for motorfr (crabr)\n");
+    }
 }
 void move_in_place_ccw(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
 	motor(motorbr,speed);
