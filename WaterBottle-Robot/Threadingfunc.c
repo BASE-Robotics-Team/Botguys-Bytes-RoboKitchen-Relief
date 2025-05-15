@@ -35,3 +35,18 @@ void *run_motorfr(void *args) {
     motor(params->port, -params->speed); // Note the -speed
     return NULL;
 }
+// Wrapper function that applies the speed directly as passed in motor_args
+void *run_motor_direct_speed_wrapper(void *args) {
+    motor_args *params = (motor_args *)args;
+    motor(params->port, params->speed);
+    // KIPR threads are detached and auto-cleaned up.
+    // If params were malloc'd, free(params) would go here.
+    return NULL;
+}
+
+// Wrapper function that applies the NEGATIVE of the speed passed in motor_args
+void *run_motor_negate_speed_wrapper(void *args) {
+    motor_args *params = (motor_args *)args;
+    motor(params->port, -params->speed); // Note the negation here
+    return NULL;
+}
