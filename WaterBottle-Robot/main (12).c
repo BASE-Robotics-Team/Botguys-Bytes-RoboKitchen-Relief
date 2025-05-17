@@ -24,7 +24,7 @@ int main()
 {
     ao();
     printf("START \n");
-    //wait_for_light(0);
+    wait_for_light(0);
     shut_down_in(119);
     enable_servo(3);
     enable_servo(2);
