@@ -4,5 +4,6 @@ This repository contains the code developed by the Bronx Academy of Software Eng
 
 ## Missing or Unused LEGO® Parts
 This section details LEGO® components that were missing from our KIPR Botball kit upon arrival and the amount missing.
-* 32348 x16
-* 32271 x4
+~~* 32348 x16~~
+~~* 32271 x4~~
+Legos received 
