@@ -10,12 +10,12 @@ int servo_Pause = 1000;
 int servo_Start = 950;
 int servo_Up = 800;
 int servo_Mid1 = 1066;
-int servo_Mid2 = 1432;
-int servo_Floor = 1700;
+int servo_Mid2 = 1232;
+int servo_Floor = 1550;
 
 //Grabber int's
 int Grabber = 3;
-int Grab_Cup = 920;
+int Grab_Cup = 940; //920
 int Grab_Drink = 1300;
 int Grab_Ice = 1200;
 int Grab_Back = 250;
@@ -66,12 +66,14 @@ void full180RIGHT()
 
 int main()
 {
+    wait_for_light(5);
+    shut_down_in(119);
     enable_servos();
     set_servo_position(arm_Port,servo_Start);
     set_servo_position(Grabber,Grab_Cup);
-    	//msleep(3500);
+    	msleep(6000); //3500
     turnRight();
-    	msleep(1480); //1250, 1320 OR 1400
+    	msleep(1550); //1250, 1320 OR 1400
     ao();
   	set_servo_position(arm_Port,servo_Mid1);
     set_servo_position(Grabber,Grab_Start);
@@ -81,10 +83,13 @@ int main()
     goForwards();
     	msleep(3350); //3350
     ao();
+    turnRight();
+    	msleep(200);
+    ao();
   	set_servo_position(arm_Port,servo_Floor);
   		msleep(servo_Pause);
     goForwards();
-    	msleep(180); //175
+    	msleep(150); //175
     ao();
   	set_servo_position(Grabber,Grab_Cup);
     	msleep(servo_Pause);
@@ -98,18 +103,45 @@ int main()
     	msleep(200); //200
   	set_servo_position(Grabber,700); //700
     goForwards();
-    	msleep(1000); //1000
+    	msleep(1600); //1000
     ao();
 	//turnLeft();
     	//msleep(250); //250
-    goForwards();
-    	msleep(400); //300
-    
-    
-    
-    
-    
-    disable_servos(); 
+    //goForwards();
+    	//msleep(400); //300
     ao();
+    set_servo_position(Grabber,Grab_Drink);
+    	msleep(1000);
+    goBackwards();
+        msleep(1000);
+    ao();
+    /*
+    turnLeft();
+    	msleep(1000);
+    ao();
+  	set_servo_position(Grabber,700); //700
+    set_servo_position(arm_Port,servo_Mid1);
+    	msleep(1000);
+    turnRight();
+    	msleep(1000);
+    ao();
+    set_servo_position(arm_Port,servo_Floor);
+    	msleep(1000);
+    goForwards();
+    	msleep(1600); //1000
+	*/
+    
+    set_servo_position(arm_Port,servo_Up);
+    	msleep(500);
+	turnLeft();
+    	msleep(500);
+    ao();
+    set_servo_position(Grabber,Grab_Start);
+    	msleep(500);
+    
+    
+    
+    ao();
+    disable_servos(); 
     return 0;
 }

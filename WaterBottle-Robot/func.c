@@ -1,8 +1,16 @@
 #include <kipr/wombat.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include "/home/kipr/Documents/KISS/Default User/thredingfunc/src/main.c"
 
-void slow(int portarm, int portarm2, int sevcurrent,int sevcurrent2,int end){
+void slow(int portarm, int portarm2,int end){
+    int sevcurrent;
+    int sevcurrent2;
+    sevcurrent = get_servo_position(portarm);
+    sevcurrent2 = get_servo_position(portarm2);
+    set_servo_position(portarm,(sevcurrent));
+    set_servo_position(portarm2,(sevcurrent2));
     while(sevcurrent != end){
         msleep(10);
         set_servo_position(portarm,(sevcurrent += 5)); // this servo starts at 0
@@ -10,7 +18,20 @@ void slow(int portarm, int portarm2, int sevcurrent,int sevcurrent2,int end){
         set_servo_position(portarm2,(sevcurrent2 -= 5)); // this servo starts at ~1409
     }
 }
-
+void slowdwn(int portarm, int portarm2,int end){
+    int sevcurrent;
+    int sevcurrent2;
+    sevcurrent = get_servo_position(portarm);
+    sevcurrent2 = get_servo_position(portarm2);
+    set_servo_position(portarm,(sevcurrent));
+    set_servo_position(portarm2,(sevcurrent2));
+    while(sevcurrent != end){
+        msleep(10);
+        set_servo_position(portarm,(sevcurrent -= 5)); // this servo starts at 0
+        msleep(5); 
+        set_servo_position(portarm2,(sevcurrent2 += 5)); // this servo starts at ~1409
+    }
+}
 void forward(int motorbr, int motorbl, int motorfl, int motorfr, int speed){
 	motor(motorbr,-speed);
 	motor(motorbl,-speed);
@@ -252,4 +273,3 @@ void chkserv(int sev1, int sev2, int sev3, int sev4){
         printf("servo success %d\n", result);
     }
 }
-

@@ -5,13 +5,13 @@
  int servo_Start = 1000; //1024
  int servo_Up = 800; //1024
  int servo_Mid1 = 1066; //1316
- int servo_Mid2 = 1432; //1608
- int servo_Floor = 1700; //1900
+ int servo_Mid2 = 1232; //1608
+ int servo_Floor = 1550; //1900
 
 int main()
 {
   enable_servos();
-  set_servo_position(arm_Port,servo_Start);
+  set_servo_position(arm_Port,servo_Up);
   	msleep(servo_Pause);
   set_servo_position(arm_Port,servo_Mid1);
   	msleep(servo_Pause);

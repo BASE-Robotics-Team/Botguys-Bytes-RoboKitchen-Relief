@@ -1,24 +1,24 @@
 #include <kipr/wombat.h>
-int motorfr = 1;
-int motorfl = 2;
-int motorbr = 3;
+int motorfr = 2;
+int motorfl = 3;
+int motorbr = 1;
 int motorbl = 0;
 int speed = 50;
 int second = 1000;
-int lline = 5;
-int rline = 4;
+int lline = 9;
+int rline = 8;
 int target = 2450;
 int box_target = 1775;
-int mbox = 3;
+int mbox = 0;
 
 int main()
 {
     while(analog(rline)<target){
         if(analog(lline)>target){
-            veer_left();
+            veer_right();
         }
         if(analog(lline)<target){
-            veer_right();
+            veer_left();
         }
         if(analog(mbox)>box_target){
             break;

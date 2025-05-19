@@ -22,10 +22,10 @@ int sevhm = 0;
 
 int main() 
 {
-    ao();
-    printf("START \n");
     wait_for_light(0);
     shut_down_in(119);
+    ao();
+    printf("START \n");
     enable_servo(3);
     enable_servo(2);
     enable_servo(0);
@@ -39,11 +39,11 @@ int main()
     msleep(50);
     motorclear(motorbr,motorbl,motorfl,motorfr);
     msleep(50);
-	backward(motorbr,motorbl,motorfl,motorfr,speed);
+    backward(motorbr,motorbl,motorfl,motorfr,speed);
     msleep(600);
     ao();
     move_in_place_ccw(motorbr,motorbl,motorfl,motorfr,speed);
-    msleep(1500);
+    msleep(1475);
     ao();
     forward(motorbr,motorbl,motorfl,motorfr,speed);
     msleep(3950);
@@ -56,13 +56,13 @@ int main()
     ssp(3,1600);
     msleep(1200);
     move_in_place_ccw(motorbr,motorbl,motorfl,motorfr,speed);
-    msleep(1350);
+    msleep(1370);
     ao();
     printf("analog placeing start \n");
     while( digital(9) != 1){
         forward(motorbr,motorbl,motorfl,motorfr,10);
     }
-        printf("analog placeing end \n");
+    printf("analog placeing end \n");
     msleep(290);
     ao();
     slow(portarm,portarm2,1200);
@@ -83,25 +83,26 @@ int main()
     backward(motorbr,motorbl,motorfl,motorfr,35);
     msleep(750);
     ao();
-    move_in_place_ccw(motorbr,motorbl,motorfl,motorfr,20);
-    msleep(12600); // at 45 6300
+    move_in_place_ccw(motorbr,motorbl,motorfl,motorfr,25);
+    msleep(11600); // at 45 6300
     ao();
     crabr(motorbr,motorbl,motorfl,motorfr,45);
-    msleep(2000);
+    msleep(1950);
     ao();
     printf("analog placeing start \n");
     while( digital(9) != 1){
         forward(motorbr,motorbl,motorfl,motorfr,25);
     }
-        printf("analog placeing end \n");
+    printf("analog placeing end \n");
     msleep(290);
     ao();
     msleep(1200);
-    slow(portarm,portarm2,1700);
+    slow(portarm,portarm2,900);
     msleep(1000);
     chkserv(3,2,0,1);
     msleep(25);
-    ssp(0,0);
+    ssp(0,2047);
     msleep(1000);
+    exit(0);
     return 0;
 }
